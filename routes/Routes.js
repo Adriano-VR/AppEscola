@@ -7,6 +7,8 @@ import CriarConta from "../screens/CriarConta";
 import { TabBarIcon } from "../components/navigation/TabBaricon";
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Button } from "react-native";
+import ButtonCustom from "../components/ButtonCustom";
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -60,12 +62,13 @@ export default function Routes() {
          
         }}> 
         <Drawer.Screen name="Home" component={HomeTabs}   options={{
-        
+             headerRight: () => <ButtonCustom />,
             drawerIcon: ({ color, size }) => (
               <TabBarIcon name="home-outline" size={size} color={color} /> // Ícone para a tela Home
             ),
           }} />
         <Drawer.Screen name="Historico" component={Historico} options={{
+        
             drawerIcon: ({ color, size }) => (
               
               <TabBarIcon name="bookmarks-outline" size={size} color={color} /> // Ícone para a tela Home

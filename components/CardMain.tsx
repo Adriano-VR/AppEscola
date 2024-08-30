@@ -6,6 +6,8 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Receita } from '../model/ModelReceita';
 import { useReceita } from '../context/Context';
 import { ThemedText } from "../Hooks/ThemedText";
+import { useFocusEffect } from '@react-navigation/native';
+import { useProfessorContext } from '../context/ContextProfessor';
 
 interface CardReceitaProps {
   item: Receita;
@@ -18,6 +20,10 @@ export const CardMain = ({ item, onRefresh }: CardReceitaProps) => {
   const [codigoModalVisible, setCodigoModalVisible] = useState(false);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false); // Novo estado para modal de confirmação
   const [codigo, setCodigo] = useState<string>('');
+const {isProfessor} = useProfessorContext()
+
+console.log(isProfessor);
+
 
   useEffect(() => {
     const loadConfirmationStatus = async () => {
@@ -108,48 +114,26 @@ export const CardMain = ({ item, onRefresh }: CardReceitaProps) => {
     }
   };
 
-  const verificarCodigo = () => {
-    const codigoCorreto = '0408'; // Defina o código correto aqui
 
-    if (codigo.trim() === '') {
-      if (Platform.OS === "android") {
-        Alert.alert(
-          "Código Vazio",
-          "Por favor, insira um código."
-        );
-      } else if (Platform.OS === "web") {
-        window.alert('Por favor, insira um código.');
-      }
-      return; // Não continue com a verificação
-    }
-
-    if (codigo === codigoCorreto) {
-      setCodigoModalVisible(false);
-      apagar();
-    } else {
-      if (Platform.OS === "android") {
-        Alert.alert(
-          "Código Incorreto",
-          "O código inserido está incorreto. Tente novamente."
-        );
-      } else if (Platform.OS === "web") {
-        window.alert('Código incorreto');
-      }
-    }
-  };
-
-  const voltar = () => {
-    setCodigo('');
-    setCodigoModalVisible(false);
-  };
 
   const mostrarConfirmacao = () => {
-    setConfirmModalVisible(true);
+    if(isProfessor) setConfirmModalVisible(true);
+    else {
+      if(Platform.OS === "android") {
+        Alert.alert(
+          "Acesso Negado",
+          "Você não tem permissão para realizar essa ação..."
+        );
+      }else{
+        window.alert("Nao Permitido");
+      }
+    }
+    
+    
   };
 
   const confirmarRemocao = () => {
-    setConfirmModalVisible(false);
-    setCodigoModalVisible(true);
+  apagar()
   };
 
   const cancelarRemocao = () => {
@@ -210,48 +194,6 @@ export const CardMain = ({ item, onRefresh }: CardReceitaProps) => {
                 <FontAwesome name="check-circle" size={40} color="green" />
               </TouchableOpacity>
             </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Modal para Inserir Código */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={codigoModalVisible}
-        onRequestClose={() => {
-          // Evita o fechamento do modal ao pressionar o botão de voltar
-          Alert.alert(
-            "Código Necessário",
-            "Você precisa inserir o código correto para continuar."
-          );
-        }}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.modalView}>
-            
-            <ThemedText type='defaultSemiBold'>Insira o código para confirmar:</ThemedText>
-            <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:10,marginVertical:15}}> 
-            <TextInput
-              style={{borderWidth: 1, padding:8,width:150,height:40 ,borderRadius:8,textAlign:"center"}}
-              autoCorrect={false} // Desativa a correção automática
-              textContentType="none" // Desativa sugestões automáticas
-              secureTextEntry={true}
-              placeholder="Código"
-              placeholderTextColor='#0a0a0a'
-              inputMode='numeric'
-              onChangeText={newText => setCodigo(newText)}
-              value={codigo}
-      
-            />
-                <TouchableOpacity onPress={verificarCodigo}>
-                <FontAwesome name="check-circle" size={40} color="green" />
-              </TouchableOpacity>
-            </View>
-           
-        
-            <ThemedText type='defaultSemiBold' onPress={() => voltar()} style={{textDecorationLine:'underline'}}>Cancelar</ThemedText>
-
           </View>
         </View>
       </Modal>

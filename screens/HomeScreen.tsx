@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { SafeAreaView, StyleSheet, View, ScrollView, RefreshControl, Dimensions } from 'react-native';
+import { SafeAreaView, StyleSheet, View, ScrollView, RefreshControl, Dimensions, Image } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useReceita } from '../context/Context';
 import { ThemedText } from '../Hooks/ThemedText';
@@ -37,6 +37,7 @@ export const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+
       <ScrollView
         contentContainerStyle={styles.scrollViewContent}
         refreshControl={
@@ -67,6 +68,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#dedede',
     justifyContent: "center",
     alignContent: "center",
+    position: "relative",
   },
   scrollViewContent: {
     paddingVertical: 20,

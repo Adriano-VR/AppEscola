@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import axios from 'axios';
 import { ToastAndroid } from 'react-native';
 import { Receita } from '../model/ModelReceita';
-import Historico from './../screens/Historico';
 
 interface ReceitaContextType {
   receitas: Receita[];
@@ -25,7 +24,9 @@ export const ReceitaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [loading, setLoading] = useState<boolean>(false);
   const [historico, setHistorico] = useState<any[]>([]); // Ajuste conforme a estrutura do histórico
 
-  const apiBaseURL = 'https://fluffy-shadow-hook.glitch.me';
+   const apiBaseURL = 'https://fluffy-shadow-hook.glitch.me';
+  // const apiBaseURL = 'http://localhost:3000';
+
 
   const fetchReceitas = async () => {
     setLoading(true);

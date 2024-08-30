@@ -1,45 +1,36 @@
-import React, { useState } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, Modal } from 'react-native';
+import React, { Component, useState } from 'react';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, Modal, Image, ImageBackground } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useReceita } from '../context/Context';
 import { ThemedText } from '../Hooks/ThemedText';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Platform, Alert, Alert as RNAlert } from 'react-native';
+import { useProfessorContext } from '../context/ContextProfessor';
 
 const CriarConta = () => {
-  const [codigoModalVisible, setCodigoModalVisible] = useState(true);
+
   const [codigo, setCodigo] = useState<string>('');
   const [receita, setReceita] = useState<string>('');
   const [desc, setDesc] = useState<string>('');
 
   const navigation = useNavigation();
   const { addReceita } = useReceita();
+  const {isProfessor} = useProfessorContext()
 
-  // Verifica o código toda vez que a aba é focada
   useFocusEffect(
     React.useCallback(() => {
-      setCodigoModalVisible(true);
-      setCodigo('')
-    }, [])
+      console.log("Focus Effect Triggered, isProfessor:", isProfessor);
+      if (!isProfessor) {
+        if (Platform.OS === 'web') {
+          window.alert("Acesso Negado");
+        } else {
+          Alert.alert("Acesso Negado", "Você não tem permissão para acessar esta página.");
+        }
+        navigation.goBack(); // Redirect back if not a professor
+      }
+    }, [isProfessor])
   );
 
-  const verificarCodigo = () => {
-    const codigoCorreto = '0408'; // Defina o código correto aqui
 
-    if (codigo === codigoCorreto) {
-      setCodigoModalVisible(false); // Fecha o modal se o código estiver correto
-    } else {
-      if(Platform.OS === "android") {
-        Alert.alert(
-          "Código Incorreto",
-          "O código inserido está incorreto. Tente novamente."
-        );
-      }else if(Platform.OS === "web") {
-        window.alert('senha errada')
-      }
-    
-    }
-  };
   
   const add = () => {
     if (desc.length > 0 && receita.length > 0) {
@@ -89,18 +80,12 @@ const CriarConta = () => {
     }
   };
 
-  const voltar = () => {
-    setCodigo('')
-    navigation.goBack()
-   
-    setCodigoModalVisible(false);
-  }
 
   return (
     <View style={styles.container}>
-      {/* Mostrar o conteúdo da página apenas se o modal estiver fechado */}
-      {!codigoModalVisible && (
-        <View style={styles.content}>
+      
+      
+      <View style={styles.content}>
           <ThemedText type='subtitle' style={{ marginBottom: 15, textAlign: 'center', color: 'black' }}>
             Cadastrar
           </ThemedText>
@@ -122,7 +107,7 @@ const CriarConta = () => {
 
           <TouchableOpacity
             style={{
-              backgroundColor: desc.length > 0 && receita.length > 0 ? 'green' : '#787586',
+              backgroundColor: desc.length > 0 && receita.length > 0 ? '#0099ff' : '#787586',
               padding: 10,
               borderRadius: 4,
               elevation: 5
@@ -134,48 +119,9 @@ const CriarConta = () => {
             </ThemedText>
           </TouchableOpacity>
         </View>
-      )}
-
-<Modal
-        animationType="fade"
-        transparent={true}
-        visible={codigoModalVisible}
-        onRequestClose={() => {
-          // Evita o fechamento do modal ao pressionar o botão de voltar
-          Alert.alert(
-            "Código Necessário",
-            "Você precisa inserir o código correto para continuar."
-          );
-        }}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.modalView}>
-            
-            <ThemedText type='defaultSemiBold'>Insira o código para confirmar:</ThemedText>
-            <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:10,marginVertical:15}}> 
-            <TextInput
-              style={{borderWidth: 1, padding:8,width:150,height:40 ,borderRadius:8,textAlign:"center"}}
-              autoCorrect={false} // Desativa a correção automática
-              textContentType="none" // Desativa sugestões automáticas
-              secureTextEntry={true}
-              placeholder="Código"
-              placeholderTextColor='#0a0a0a'
-              inputMode='numeric'
-              onChangeText={newText => setCodigo(newText)}
-              value={codigo}
       
-            />
-                <TouchableOpacity onPress={verificarCodigo}>
-                <FontAwesome name="check-circle" size={40} color="green" />
-              </TouchableOpacity>
-            </View>
-           
-        
-            <ThemedText type='defaultSemiBold' onPress={() => voltar()} style={{textDecorationLine:'underline'}}>Cancelar</ThemedText>
 
-          </View>
-        </View>
-      </Modal>
+
 
      
     </View>
@@ -188,7 +134,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#dedede',
-    paddingVertical: 40,
+position: "relative",
     justifyContent: 'center',
     width: '100%',
   },
