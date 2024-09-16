@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { SafeAreaView, StyleSheet, View, ScrollView, RefreshControl, Dimensions, Image } from 'react-native';
+import { SafeAreaView, StyleSheet, View, ScrollView, RefreshControl, Dimensions, Image, ActivityIndicator } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useReceita } from '../context/Context';
 import { ThemedText } from '../Hooks/ThemedText';
-import LoadingSpinner from '../components/LoadSpinner';
 import { CardMain } from '../components/CardMain';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 export const HomeScreen = () => {
@@ -30,7 +29,7 @@ export const HomeScreen = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <LoadingSpinner />
+         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
   }

@@ -3,7 +3,6 @@ import { Alert, SafeAreaView, StyleSheet, TouchableOpacity, View, Platform } fro
 import { useReceita } from '../context/Context';
 import { ThemedText } from '../Hooks/ThemedText';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import LoadingSpinner from './LoadSpinner';
 
 export const CardHistory = ({ item, onRefresh }: any) => {
   const [refreshing, setRefreshing] = useState(false);

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import axios from 'axios';
 import { ToastAndroid } from 'react-native';
 import { Receita } from '../model/ModelReceita';
+import DeviceInfo from 'react-native-device-info';
 
 interface ReceitaContextType {
   receitas: Receita[];
@@ -15,6 +16,7 @@ interface ReceitaContextType {
   historico: any[];
   removeHistoricoItem: (id: number) => Promise<void>; // Atualizado para string (se o ID for string)
   removeAllHistorico: () => Promise<void>;
+
 }
 
 const ReceitaContext = createContext<ReceitaContextType | undefined>(undefined);
@@ -28,10 +30,11 @@ export const ReceitaProvider: React.FC<{ children: ReactNode }> = ({ children })
   // const apiBaseURL = 'http://localhost:3000';
 
 
+
   const fetchReceitas = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${apiBaseURL}/`);
+      const response = await axios.get(`${apiBaseURL}/home`);
       setReceitas(response.data.items);
     } catch (error) {
       console.error('Erro ao buscar receitas:', error);
@@ -44,7 +47,7 @@ export const ReceitaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const fetchHistorico = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${apiBaseURL}/historico`);
+      const response = await axios.get(`${apiBaseURL}/gethistorico`);
    
       setHistorico(response.data.items); // Ajuste conforme a estrutura da resposta
     } catch (error) {
@@ -63,7 +66,7 @@ export const ReceitaProvider: React.FC<{ children: ReactNode }> = ({ children })
         users: 0
       };
 
-      const response = await axios.post(`${apiBaseURL}/add`, newReceita);
+      const response = await axios.post(`${apiBaseURL}/adicionar`, newReceita);
       const addedReceita = response.data.newItem;
 
       setReceitas(prevReceitas => [...prevReceitas, addedReceita]);
@@ -90,7 +93,7 @@ export const ReceitaProvider: React.FC<{ children: ReactNode }> = ({ children })
       const receitaToUpdate = receitas.find(receita => receita.id === id);
       if (receitaToUpdate) {
         const updatedReceita = { ...receitaToUpdate, users: receitaToUpdate.users! + 1 };
-        await axios.patch(`${apiBaseURL}/increment/${id}`, updatedReceita);
+        await axios.patch(`${apiBaseURL}/incrementar/${id}`, updatedReceita);
         setReceitas(receitas.map(receita => (receita.id === id ? updatedReceita : receita)));
         fetchReceitas()
       }
@@ -107,7 +110,7 @@ export const ReceitaProvider: React.FC<{ children: ReactNode }> = ({ children })
       const receitaToUpdate = receitas.find(receita => receita.id === id);
       if (receitaToUpdate) {
         const updatedReceita = { ...receitaToUpdate, users: Math.max(receitaToUpdate.users! - 1, 0) };
-        await axios.patch(`${apiBaseURL}/decrement/${id}`, updatedReceita);
+        await axios.patch(`${apiBaseURL}/decrementar/${id}`, updatedReceita);
         setReceitas(receitas.map(receita => (receita.id === id ? updatedReceita : receita)));
         fetchReceitas()
       }
@@ -121,7 +124,7 @@ export const ReceitaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const removeReceita = async (id: number) => {
     setLoading(true);
     try {
-      await axios.delete(`${apiBaseURL}/delete/${id}`);
+      await axios.delete(`${apiBaseURL}/apagar/${id}`);
       setReceitas(receitas.filter(receita => receita.id !== id));
       fetchReceitas()
       ToastAndroid.showWithGravity(
@@ -139,7 +142,7 @@ export const ReceitaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const removeHistoricoItem = async (id: number) => {
     setLoading(true);
     try {
-      await axios.delete(`${apiBaseURL}/historico/delete/${id}`);
+      await axios.delete(`${apiBaseURL}/historico/apagar/${id}`);
       setHistorico(historico.filter(item => item.id !== id));
       fetchReceitas()
       ToastAndroid.showWithGravity(
@@ -157,7 +160,7 @@ export const ReceitaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const removeAllHistorico = async () => {
     setLoading(true);
     try {
-      await axios.delete(`${apiBaseURL}/historico/delete-all`);
+      await axios.delete(`${apiBaseURL}/historico/deletar-all`);
       setHistorico([]);
       fetchReceitas()
       ToastAndroid.showWithGravity(
