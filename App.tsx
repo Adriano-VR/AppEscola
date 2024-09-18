@@ -18,7 +18,7 @@ const AppContent = () => {
 
   useEffect(() => {
     // Only perform version check on mobile platforms
-    if (Platform.OS !== 'web') {
+    // if (Platform.OS !== 'web') {
       const verifyVersion = async () => {
         try {
           const response = await fetch('https://fluffy-shadow-hook.glitch.me/api/check-version', {
@@ -34,7 +34,6 @@ const AppContent = () => {
             Alert.alert(
               "Atualização Necessária",
               data.message,
-              [{ text: "Atualizar", onPress: () => Linking.openURL('https://example.com/update') }]
             );
             setIsVersionValid(false);
           } else {
@@ -49,10 +48,10 @@ const AppContent = () => {
       };
 
       verifyVersion();
-    } else {
-      // For web, no version check needed
-      setIsLoading(false);
-    }
+    // } else {
+    //   // For web, no version check needed
+    //   setIsLoading(false);
+    // }
   }, [currentVersion]);
 
   if (isLoading) {
@@ -65,7 +64,8 @@ const AppContent = () => {
     );
   }
 
-  if (!isVersionValid && Platform.OS !== 'web') {
+  // if (!isVersionValid && Platform.OS !== 'web') {
+    if (!isVersionValid) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ThemedText type='defaultSemiBold'>Sua versão do aplicativo não é mais suportada.</ThemedText>

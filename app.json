@@ -24,12 +24,13 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "version": "2.0.0" 
+      "version": "2.0.0"
     },
     "extra": {
       "eas": {
-        "projectId": "52555a9e-b231-46a7-be2c-e10986a8719b"
+        "projectId": "db86a130-3caf-4e7a-8b32-3f10faa78f9c"
       }
-    }
+    },
+    "owner": "adriano2607"
   }
 }
